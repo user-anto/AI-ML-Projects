@@ -131,7 +131,7 @@ class CNNBiGRU(nn.Module):
 - The **confusion matrix** and **loss curve** are recorded in Confusion_Matrix.png and loss_curve.png.
 
 ## References
-- **Paper:** [CNN-BiGRU Speech Emotion Recognition Based on Attention Mechanism] and [Speech Emotion Recognition using Convolutional and Recurrent Neural Networks]
+- **Papers:** [CNN-BiGRU Speech Emotion Recognition Based on Attention Mechanism](https://www.computer.org/csdl/proceedings-article/aiiip/2023/714500a085/1UjIPbuqq8U) and [Speech Emotion Recognition using Convolutional and Recurrent Neural Networks](https://ieeexplore.ieee.org/document/7820699)
 - **Dataset:** [RAVDESS](https://zenodo.org/record/1188976)
 
 ## Conclusion
