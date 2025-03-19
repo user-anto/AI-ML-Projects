@@ -27,7 +27,7 @@ pip install librosa soundfile glob numpy torch scikit-learn seaborn matplotlib p
 ### Training the Model
 To train the model on the RAVDESS dataset and check its performance on the 20% of the dataset as test data, run:
 ```bash
-python training.py
+python speech.py
 ```
 ### Evaluating the Model
 To test the model or real time voice execute:
@@ -131,7 +131,7 @@ class CNNBiGRU(nn.Module):
 - The **confusion matrix** and **loss curve** are recorded in Confusion_Matrix.png and loss_curve.png.
 
 ## References
-- **Paper:** [CNN-BiGRU Speech Emotion Recognition Based on Attention Mechanism]
+- **Paper:** [CNN-BiGRU Speech Emotion Recognition Based on Attention Mechanism] and [Speech Emotion Recognition using Convolutional and Recurrent Neural Networks]
 - **Dataset:** [RAVDESS](https://zenodo.org/record/1188976)
 
 ## Conclusion
