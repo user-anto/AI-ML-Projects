@@ -20,7 +20,7 @@ This implementation can be trained on publicly available **speech emotion datase
 ### Prerequisites
 Ensure you have the following dependencies installed:
 ```bash
-pip install torch torchaudio librosa numpy matplotlib
+pip install librosa soundfile glob numpy torch scikit-learn seaborn matplotlib pickle
 ```
 
 ## Usage
