@@ -26,14 +26,14 @@ All data is loaded from an Excel file (`USA.xlsx`) with two sheets:
 ```python
 # USA data
 df1 = pd.read_excel(
-    'USA.xlsx', sheet_name='Sheet1', usecols=[1,2,5],
-    names=['YEAR','CO2 PRODUCTIONS IN TONS','TOTAL POPULATION'], header=1
+    'USA.xlsx', sheet_name='Sheet1', usecols=[1,2],
+    names=['YEAR','CO2 PRODUCTIONS IN TONS'], header=1
 )
 
 # India data (same file, Sheet2)
 df2 = pd.read_excel(
-    'USA.xlsx', sheet_name='Sheet2', usecols=[1,2,5],
-    names=['YEAR','CO2 PRODUCTIONS IN TONS','TOTAL POPULATION'], header=1
+    'USA.xlsx', sheet_name='Sheet2', usecols=[1,2],
+    names=['YEAR','CO2 PRODUCTIONS IN TONS'], header=1
 )
 ```
 
