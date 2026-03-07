@@ -1,0 +1,14 @@
+camera_index: 0
+snapshot_delay_seconds: 3
+snapshot_path: snapshot.jpg
+history_path: history.txt
+
+ollama_host: http://127.0.0.1:11434
+vision_model: qwen3-vl:4b
+roast_model: llama3.2:3b
+request_timeout_seconds: 90
+ollama_keep_alive: 0s
+roast_temperature: 0.9
+
+default_roast_mode: normal
+wheel_spin_seconds: 2.6
