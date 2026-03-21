@@ -1,0 +1,392 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>YouTube Notes RAG</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #fff7fc;
+        --surface: rgba(255, 255, 255, 0.88);
+        --surface-strong: #ffffff;
+        --ink: #161018;
+        --ink-soft: #66586a;
+        --pink-100: #ffd8ee;
+        --pink-300: #ff94cc;
+        --pink-500: #ff3ea8;
+        --pink-600: #e52b95;
+        --line: #f3d5e8;
+        --shadow: 0 24px 60px rgba(116, 34, 84, 0.16);
+        --radius-xl: 20px;
+        --radius-md: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+        color: var(--ink);
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 8% 12%, rgba(255, 111, 196, 0.2), transparent 34%),
+          radial-gradient(circle at 92% 8%, rgba(0, 0, 0, 0.1), transparent 30%),
+          linear-gradient(150deg, #fff7fc 0%, #fff 42%, #ffeef8 100%);
+        padding: 2.5rem 1rem 3rem;
+      }
+
+      .app {
+        width: min(980px, 100%);
+        margin: 0 auto;
+      }
+
+      .hero {
+        margin-bottom: 1.2rem;
+      }
+
+      .eyebrow {
+        margin: 0;
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #8c5f7a;
+      }
+
+      h1 {
+        margin: 0.35rem 0 0.35rem;
+        font-size: clamp(1.9rem, 4vw, 2.9rem);
+        line-height: 1.06;
+        letter-spacing: -0.02em;
+      }
+
+      .hero-copy {
+        margin: 0;
+        color: var(--ink-soft);
+        max-width: 62ch;
+        font-size: 1.01rem;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        border-radius: var(--radius-xl);
+        padding: 1.25rem;
+        margin-top: 1rem;
+        backdrop-filter: blur(8px);
+        animation: lift-in 420ms ease-out both;
+      }
+
+      .card:nth-of-type(2) {
+        animation-delay: 80ms;
+      }
+
+      @keyframes lift-in {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .section-title {
+        margin: 0;
+        font-size: 1.18rem;
+        letter-spacing: -0.01em;
+      }
+
+      .section-subtitle {
+        margin: 0.35rem 0 1rem;
+        color: var(--ink-soft);
+        font-size: 0.94rem;
+      }
+
+      label {
+        display: block;
+        margin-top: 0.9rem;
+        margin-bottom: 0.35rem;
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #312535;
+      }
+
+      input,
+      select,
+      textarea,
+      button {
+        width: 100%;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
+        font-family: inherit;
+        font-size: 0.95rem;
+      }
+
+      input,
+      select,
+      textarea {
+        background: var(--surface-strong);
+        color: var(--ink);
+        padding: 0.72rem 0.8rem;
+        transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+      }
+
+      input::placeholder,
+      textarea::placeholder {
+        color: #9f90a2;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--pink-500);
+        box-shadow: 0 0 0 4px rgba(255, 62, 168, 0.15);
+      }
+
+      textarea {
+        resize: vertical;
+      }
+
+      button {
+        margin-top: 0.95rem;
+        cursor: pointer;
+        border: 1px solid #111;
+        background: linear-gradient(135deg, #1f1a1f 0%, #43253a 36%, #ff3ea8 100%);
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        padding: 0.72rem 0.8rem;
+        transition: transform 140ms ease, box-shadow 160ms ease, opacity 160ms ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 20px rgba(101, 13, 69, 0.28);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      button:disabled {
+        opacity: 0.75;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      h3 {
+        margin: 1rem 0 0.45rem;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #7d5f72;
+      }
+
+      pre {
+        margin: 0;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: #fff;
+        padding: 0.8rem;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.85rem;
+        line-height: 1.45;
+        color: #221825;
+        min-height: 3.2rem;
+      }
+
+      #sources {
+        margin-top: 0.7rem;
+      }
+
+      #sources strong {
+        display: inline-block;
+        font-size: 0.86rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #7d5f72;
+      }
+
+      #sources ul {
+        margin: 0.55rem 0 0;
+        padding-left: 1.25rem;
+      }
+
+      #sources li + li {
+        margin-top: 0.35rem;
+      }
+
+      #sources a {
+        color: #ac1f71;
+        text-decoration-thickness: 1.5px;
+        text-underline-offset: 2px;
+      }
+
+      #sources a:hover {
+        color: #7f124f;
+      }
+
+      @media (max-width: 700px) {
+        body {
+          padding: 1.4rem 0.8rem 1.8rem;
+        }
+
+        .card {
+          padding: 1rem;
+          border-radius: 16px;
+        }
+
+        h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <header class="hero">
+        <p class="eyebrow">Get Notes Directly from Youtube Videos</p>
+        <h1>Send Notes</h1>
+        <p class="hero-copy">Ingest videos and playlists, then ask questions against your saved notes with grounded answers.</p>
+      </header>
+
+      <div class="card">
+        <h2 class="section-title">Ingest</h2>
+        <p class="section-subtitle">Paste a YouTube video or playlist and choose your note style.</p>
+        <form id="ingest-form">
+          <label>YouTube video or playlist link</label>
+          <input name="link" required placeholder="https://www.youtube.com/watch?v=..." />
+
+          <label>Notes format</label>
+          <select name="note_format" id="note_format">
+            <option value="short">Short</option>
+            <option value="medium">Medium</option>
+            <option value="detailed">Detailed</option>
+            <option value="custom">Custom</option>
+          </select>
+
+          <div id="custom_wrap" style="display:none;">
+            <label>Custom format instructions</label>
+            <textarea name="custom_format" rows="4" placeholder="Example: bullet points grouped by topic with key quotes"></textarea>
+          </div>
+
+          <button id="ingest-btn" type="submit">Ingest</button>
+        </form>
+        <h3>Ingest Result</h3>
+        <pre id="ingest-output"></pre>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Chat</h2>
+        <p class="section-subtitle">Ask questions over your stored notes. Source links open in a new tab.</p>
+        <label>Question</label>
+        <textarea id="question" rows="4" placeholder="What were the key takeaways from the playlist?"></textarea>
+        <button id="ask" type="button">Ask</button>
+        <h3>Answer</h3>
+        <pre id="answer"></pre>
+        <div id="sources"></div>
+      </div>
+    </main>
+
+    <script>
+      const formatSelect = document.getElementById('note_format');
+      const customWrap = document.getElementById('custom_wrap');
+      const ingestForm = document.getElementById('ingest-form');
+      const ingestOutput = document.getElementById('ingest-output');
+      const ingestButton = document.getElementById('ingest-btn');
+      const askButton = document.getElementById('ask');
+      const answer = document.getElementById('answer');
+      const sources = document.getElementById('sources');
+
+      formatSelect.addEventListener('change', () => {
+        customWrap.style.display = formatSelect.value === 'custom' ? 'block' : 'none';
+      });
+
+      ingestForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        ingestOutput.textContent = 'Processing...';
+        ingestButton.disabled = true;
+        ingestButton.textContent = 'Ingesting...';
+
+        try {
+          const formData = new FormData(ingestForm);
+          const res = await fetch('/ingest', {
+            method: 'POST',
+            body: formData,
+          });
+
+          const data = await res.json();
+          ingestOutput.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+          ingestOutput.textContent = 'Request failed. Please try again.';
+        } finally {
+          ingestButton.disabled = false;
+          ingestButton.textContent = 'Ingest';
+        }
+      });
+
+      askButton.addEventListener('click', async () => {
+        const question = document.getElementById('question').value.trim();
+        if (!question) return;
+
+        answer.textContent = 'Thinking...';
+        askButton.disabled = true;
+        askButton.textContent = 'Answering...';
+        sources.textContent = '';
+
+        try {
+          const res = await fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question }),
+          });
+
+          const data = await res.json();
+          answer.textContent = data.answer || '';
+
+          if (Array.isArray(data.sources) && data.sources.length > 0) {
+            const heading = document.createElement('strong');
+            heading.textContent = 'Sources';
+            sources.appendChild(heading);
+
+            const list = document.createElement('ul');
+            for (const source of data.sources) {
+              if (!source.url) continue;
+              const item = document.createElement('li');
+              const link = document.createElement('a');
+              link.href = source.url;
+              link.target = '_blank';
+              link.rel = 'noopener noreferrer';
+              link.textContent = source.title || source.url;
+              item.appendChild(link);
+              list.appendChild(item);
+            }
+            sources.appendChild(list);
+          }
+        } catch (error) {
+          answer.textContent = 'Request failed. Please try again.';
+        } finally {
+          askButton.disabled = false;
+          askButton.textContent = 'Ask';
+        }
+      });
+    </script>
+  </body>
+</html>
