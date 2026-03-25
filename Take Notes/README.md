@@ -171,15 +171,12 @@ Response:
 ## Portfolio Highlights
 
 This project demonstrates:
-- practical LLM app architecture (ingest -> transform -> persist -> retrieve -> answer)
-- orchestration with graph-based workflow (LangGraph)
+- LLM app architecture: ingest -> transform -> persist -> retrieve -> answer
+- orchestration with LangGraph
 - tool-calling RAG instead of prompt-only retrieval
-- local-first model serving with Ollama
-- clean API + UI integration
+- local model serving with Ollama
 
 ## Future Improvements
 
-- Add auth and per-user note collections
 - Add streaming token responses for chat
-- Add evaluation harness for retrieval accuracy
 - Add asynchronous/background playlist ingestion jobs
