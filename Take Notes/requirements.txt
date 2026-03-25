@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+langgraph
+langchain-ollama
+langchain-chroma
+langchain-text-splitters
+chromadb
+youtube-transcript-api
+pytube
+python-multipart
+tqdm

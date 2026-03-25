@@ -18,6 +18,7 @@ from pydantic import BaseModel
 from pytube import Playlist, YouTube
 from tqdm import tqdm
 from youtube_transcript_api import YouTubeTranscriptApi
+import uvicorn
 
 
 PERSIST_DIR = "./chroma_db"
@@ -52,7 +53,7 @@ class ChatRequest(BaseModel):
     question: str
 
 
-app = FastAPI(title="Send Notes")
+app = FastAPI(title="Take Notes")
 
 
 def to_text(result: object) -> str:
@@ -169,19 +170,19 @@ def generate_notes_node(state: IngestState) -> IngestState:
             to_text(
                 note_llm.invoke(
                     f"""
-You are writing notes from a YouTube transcript.
+                    You are writing notes from a YouTube transcript.
 
-Requested format/style:
-{state['note_style']}
+                    Requested format/style:
+                    {state['note_style']}
 
-Rules:
-- Keep factual fidelity to transcript.
-- Use bullets.
-- Include important definitions, steps, examples, and conclusions.
+                    Rules:
+                    - Keep factual fidelity to transcript.
+                    - Use bullets.
+                    - Include important definitions, steps, examples, and conclusions.
 
-Transcript chunk:
-{chunk}
-""".strip()
+                    Transcript chunk:
+                    {chunk}
+                    """.strip()
                 )
             )
         )
@@ -189,14 +190,14 @@ Transcript chunk:
     notes = to_text(
         note_llm.invoke(
             f"""
-Combine these chunk notes into one clean note document.
+            Combine these chunk notes into one clean note document.
 
-Requested format/style:
-{state['note_style']}
+            Requested format/style:
+            {state['note_style']}
 
-Chunk notes:
-{chr(10).join(chunk_notes)}
-""".strip()
+            Chunk notes:
+            {chr(10).join(chunk_notes)}
+            """.strip()
         )
     )
     return {**state, "notes": notes, "status": "notes_ready", "warning": ""}
@@ -347,13 +348,13 @@ def rag_answer(question: str) -> dict:
     messages = [
         SystemMessage(
             content="""
-You are a RAG assistant for YouTube notes.
-You must call a retrieval tool before answering.
-- For specific position requests (for example: "4th video", "video number four"), use get_notes_by_position.
-- For general questions, use search_notes.
-- Use only tool results; do not invent facts.
-""".strip()
-        ),
+            You are a RAG assistant for YouTube notes.
+            You must call a retrieval tool before answering.
+            - For specific position requests (for example: "4th video", "video number four"), use get_notes_by_position.
+            - For general questions, use search_notes.
+            - Use only tool results; do not invent facts.
+            """.strip()
+            ),
         HumanMessage(content=question),
     ]
     sources: list[dict] = []
@@ -476,6 +477,4 @@ def chat(request: ChatRequest) -> dict:
 
 
 if __name__ == "__main__":
-    import uvicorn
-
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
